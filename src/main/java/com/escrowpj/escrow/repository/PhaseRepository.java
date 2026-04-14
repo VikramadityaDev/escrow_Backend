@@ -6,5 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface PhaseRepository extends JpaRepository<ProjectPhase, Long> {
+
     List<ProjectPhase> findByProjectId(Long projectId);
 }

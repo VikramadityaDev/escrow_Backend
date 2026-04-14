@@ -34,6 +34,7 @@ public class Project {
     @Enumerated(EnumType.STRING)
     private ProjectStatus status;
 
+
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
     private List<ProjectPhase> milestones;
 
