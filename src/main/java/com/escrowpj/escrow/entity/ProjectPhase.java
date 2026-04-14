@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 
 @Entity
 @Getter
@@ -19,16 +17,17 @@ public class ProjectPhase {
     private Long id;
 
     private String name;
+
     private Double amount;
 
     private LocalDate dueDate;
 
     @Enumerated(EnumType.STRING)
-    private PhaseStatus status;
+    private PhaseStatus status = PhaseStatus.PENDING;
+
+    private String updateMessage;
 
     @ManyToOne
-    @JoinColumn(name = "project_id", nullable = false)
-    @JsonIgnore
+    @JoinColumn(name = "project_id")
     private Project project;
-
 }

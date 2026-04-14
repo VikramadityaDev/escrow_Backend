@@ -2,6 +2,7 @@ package com.escrowpj.escrow.controller;
 
 import com.escrowpj.escrow.dto.ApiResponse;
 import com.escrowpj.escrow.dto.CreateProjectRequest;
+import com.escrowpj.escrow.dto.ProjectResponse;
 import com.escrowpj.escrow.entity.Project;
 import com.escrowpj.escrow.service.ProjectService;
 import lombok.RequiredArgsConstructor;
@@ -61,15 +62,11 @@ public class ProjectController {
 
     // 🔹 FREELANCER → View Assigned Projects
     @GetMapping("/assigned")
-    public ResponseEntity<ApiResponse<List<Project>>> getAssignedProjects(
-            Principal principal
-    ) {
-
-        List<Project> projects =
-                projectService.getAssignedProjects(principal.getName());
+    public ResponseEntity<ApiResponse<?>> getAssignedProjects(Principal principal) {
 
         return ResponseEntity.ok(
-                new ApiResponse<>(true, projects)
+                new ApiResponse<>(true,
+                        projectService.getAssignedProjects(principal.getName()))
         );
     }
 }

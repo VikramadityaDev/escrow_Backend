@@ -1,6 +1,7 @@
 package com.escrowpj.escrow.dto;
 
 import lombok.*;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -17,4 +18,9 @@ public class ProjectResponse {
     private Double budget;
     private LocalDate deadline;
     private String status;
+
+    private String clientName;
+    private String freelancerName;
+
+    private List<MilestoneResponse> milestones; // 🔥 important
 }

@@ -1,6 +1,8 @@
 package com.escrowpj.escrow.service;
 
 import com.escrowpj.escrow.dto.CreateProjectRequest;
+import com.escrowpj.escrow.dto.MilestoneResponse;
+import com.escrowpj.escrow.dto.ProjectResponse;
 import com.escrowpj.escrow.entity.*;
 import com.escrowpj.escrow.exception.ProjectCreationException;
 import com.escrowpj.escrow.exception.UserNotFoundException;
@@ -8,6 +10,7 @@ import com.escrowpj.escrow.repository.ProjectRepository;
 import com.escrowpj.escrow.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import java.util.stream.Collectors;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -68,7 +71,7 @@ public class ProjectService {
 
             return phase;
 
-        }).toList();
+        }).collect(Collectors.toList());
 
         project.setMilestones(phases);
 
@@ -90,11 +93,41 @@ public class ProjectService {
     }
 
     // FREELANCER → view assigned projects
-    public List<Project> getAssignedProjects(String email) {
+    public List<ProjectResponse> getAssignedProjects(String email) {
 
         User freelancer = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        return projectRepository.findByFreelancer(freelancer);
+        return projectRepository.findByFreelancer(freelancer)
+                .stream()
+                .map(project -> {
+
+                    // 🔥 convert milestones safely
+                    List<MilestoneResponse> milestoneList =
+                            project.getMilestones().stream()
+                                    .map(m -> new MilestoneResponse(
+                                            m.getId(),
+                                            m.getName(),
+                                            m.getAmount(),
+                                            m.getStatus().name(),
+                                            m.getUpdateMessage()
+                                    ))
+                                    .collect(Collectors.toList());
+
+                    return new ProjectResponse(
+                            project.getId(),
+                            project.getTitle(),
+                            project.getDescription(),
+                            project.getCategory(),
+                            project.getBudget(),
+                            project.getDeadline(),
+                            project.getStatus().name(),
+                            project.getClient().getName(),
+                            project.getFreelancer().getName(),
+                            milestoneList // 🔥 attach milestones
+                    );
+
+                })
+                .collect(Collectors.toList());
     }
 }
